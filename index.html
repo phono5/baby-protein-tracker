@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby Protein Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FDF6EE;
+    --warm-white: #FFFBF5;
+    --blush: #F5DDD3;
+    --blush-dark: #E8BFB0;
+    --sage: #C8D8C0;
+    --sage-dark: #9DB89A;
+    --terracotta: #C97B5A;
+    --terracotta-light: #E8A98A;
+    --brown: #7A5C4A;
+    --brown-light: #B08070;
+    --text: #4A3728;
+    --text-muted: #9A7D6E;
+    --text-light: #C4A898;
+    --card-bg: #FFFAF5;
+    --border: rgba(180,130,100,0.15);
+    --border-strong: rgba(180,130,100,0.25);
+    --goal: 80;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 3rem;
+  }
+
+  /* Header */
+  .header {
+    background: var(--blush);
+    padding: 2rem 1.5rem 1.75rem;
+    text-align: center;
+    border-bottom: 1px solid var(--blush-dark);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -20px;
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+  }
+  .header-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--brown);
+    letter-spacing: -0.3px;
+    position: relative;
+    z-index: 1;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--brown-light);
+    margin-top: 4px;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Main content */
+  .content {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 0;
+  }
+
+  /* Goal card */
+  .goal-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 16px rgba(180,130,100,0.08);
+  }
+  .goal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .goal-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+  }
+  .goal-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--brown);
+    line-height: 1;
+  }
+  .goal-number .unit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+  .goal-sub {
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: right;
+    font-weight: 300;
+  }
+  .progress-track {
+    height: 10px;
+    background: var(--blush);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--terracotta-light), var(--terracotta));
+    transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+    min-width: 0;
+  }
+  .progress-fill.over {
+    background: linear-gradient(90deg, #E8A98A, #c0392b);
+  }
+  .progress-fill.done {
+    background: linear-gradient(90deg, var(--sage), var(--sage-dark));
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 10px;
+  }
+  .status-badge.under { background: var(--blush); color: var(--brown-light); }
+  .status-badge.done { background: #dff0d8; color: #3a7a3a; }
+  .status-badge.over { background: #fde8e8; color: #c0392b; }
+
+  /* Section title */
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    padding-left: 2px;
+  }
+
+  /* Food cards */
+  .food-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+
+  .food-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .food-card.active {
+    border-color: var(--blush-dark);
+    box-shadow: 0 2px 12px rgba(180,130,100,0.1);
+  }
+
+  .food-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .food-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .food-portion {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 3px;
+    font-weight: 300;
+  }
+  .food-protein-display {
+    text-align: right;
+    min-width: 52px;
+    flex-shrink: 0;
+  }
+  .food-protein-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--terracotta);
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .food-protein-val.zero { color: var(--text-light); }
+  .food-protein-label {
+    font-size: 10px;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 4px;
+    background: var(--blush);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    cursor: pointer;
+    border: 3px solid var(--warm-white);
+    box-shadow: 0 1px 6px rgba(180,100,70,0.3);
+    transition: transform 0.15s, background 0.2s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    cursor: pointer;
+    border: 3px solid var(--warm-white);
+    box-shadow: 0 1px 6px rgba(180,100,70,0.3);
+  }
+
+  .portion-tag {
+    background: var(--blush);
+    color: var(--brown);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    min-width: 60px;
+    text-align: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .portion-tag.zero {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border);
+  }
+
+  /* Reset button */
+  .reset-btn {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.2px;
+  }
+  .reset-btn:hover {
+    background: var(--blush);
+    color: var(--brown);
+    border-color: var(--blush-dark);
+  }
+  .reset-btn:active { transform: scale(0.99); }
+
+  /* Decoration dots */
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--blush-dark);
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-icon">🌿</span>
+  <h1>Baby Protein Tracker</h1>
+  <p>Tagesprotein für Mutter & Kind</p>
+</div>
+
+<div class="content">
+
+  <div class="goal-card">
+    <div class="goal-row">
+      <span class="goal-label">Protein heute</span>
+      <div style="text-align:right;">
+        <div class="goal-number" id="total-display">0<span class="unit">g</span></div>
+        <div class="goal-sub">Tagesziel: 80g</div>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-labels">
+      <span>0g</span>
+      <span>40g</span>
+      <span>80g</span>
+    </div>
+    <div id="status-badge" class="status-badge under">Noch 80g bis zum Tagesziel</div>
+  </div>
+
+  <div class="section-title">Lebensmittel</div>
+  <div class="food-list" id="food-list"></div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ Alle Portionen zurücksetzen</button>
+
+  <div class="dots">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+</div>
+
+<script>
+const foods = [
+  { name: "Soja Skyr Alternative",           portion: "200g",                    ppP: 12 },
+  { name: "High Protein Müsli Schoko Nuss",  portion: "100g",                    ppP: 30 },
+  { name: "Hanfsamen",                       portion: "3 EL",                    ppP: 10 },
+  { name: "Nüsse",                           portion: "30g",                     ppP: 7  },
+  { name: "Edamame",                         portion: "100g Bohnen / 50g Kerne", ppP: 5  },
+  { name: "Wasa Protein Knäckebrot",         portion: "50g",                     ppP: 10 },
+  { name: "Lupinen",                         portion: "50g",                     ppP: 5  },
+  { name: "Hummus",                          portion: "50g",                     ppP: 3  },
+  { name: "Tofu",                            portion: "100g",                    ppP: 17 },
+  { name: "Tempeh",                          portion: "100g",                    ppP: 19 }
+];
+
+const GOAL = 80;
+
+function portionLabel(v) {
+  if (v === 0) return "0";
+  if (v === 1) return "1 Portion";
+  return v + " Port.";
+}
+
+function getTotal() {
+  return foods.reduce((sum, f, i) => {
+    return sum + parseFloat(document.getElementById("sl-" + i).value) * f.ppP;
+  }, 0);
+}
+
+function updateTotal() {
+  const total = Math.round(getTotal());
+  document.getElementById("total-display").innerHTML = total + '<span class="unit">g</span>';
+
+  const pct = Math.min((total / GOAL) * 100, 100);
+  const fill = document.getElementById("progress-fill");
+  fill.style.width = pct + "%";
+  fill.className = "progress-fill" + (total > GOAL ? " over" : total >= GOAL ? " done" : "");
+
+  const badge = document.getElementById("status-badge");
+  if (total >= GOAL) {
+    badge.className = "status-badge done";
+    badge.textContent = "✓ Tagesziel erreicht!";
+  } else if (total > GOAL) {
+    badge.className = "status-badge over";
+    badge.textContent = (total - GOAL) + "g über dem Tagesziel";
+  } else {
+    badge.className = "status-badge under";
+    badge.textContent = "Noch " + (GOAL - total) + "g bis zum Tagesziel";
+  }
+}
+
+function updateCard(i) {
+  const slider = document.getElementById("sl-" + i);
+  const val = parseFloat(slider.value);
+  const protein = Math.round(val * foods[i].ppP);
+
+  document.getElementById("pval-" + i).textContent = protein + "g";
+  document.getElementById("pval-" + i).className = "food-protein-val" + (val === 0 ? " zero" : "");
+
+  const tag = document.getElementById("ptag-" + i);
+  tag.textContent = portionLabel(val);
+  tag.className = "portion-tag" + (val === 0 ? " zero" : "");
+
+  document.getElementById("card-" + i).className = "food-card" + (val > 0 ? " active" : "");
+
+  updateTotal();
+}
+
+function resetAll() {
+  foods.forEach((f, i) => {
+    document.getElementById("sl-" + i).value = 0;
+    updateCard(i);
+  });
+}
+
+const list = document.getElementById("food-list");
+foods.forEach((f, i) => {
+  const card = document.createElement("div");
+  card.className = "food-card";
+  card.id = "card-" + i;
+  card.innerHTML = `
+    <div class="food-top">
+      <div>
+        <div class="food-name">${f.name}</div>
+        <div class="food-portion">1 Portion = ${f.portion} &middot; ${f.ppP}g Protein</div>
+      </div>
+      <div class="food-protein-display">
+        <div class="food-protein-val zero" id="pval-${i}">0g</div>
+        <div class="food-protein-label">Protein</div>
+      </div>
+    </div>
+    <div class="slider-row">
+      <input type="range" id="sl-${i}" min="0" max="3" step="0.5" value="0" oninput="updateCard(${i})">
+      <span class="portion-tag zero" id="ptag-${i}">0</span>
+    </div>
+  `;
+  list.appendChild(card);
+});
+</script>
+</body>
+</html>

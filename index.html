@@ -450,31 +450,21 @@
   .info-btn:hover { background: var(--blush-dark); }
   .tooltip {
     display: none;
-    position: absolute;
-    left: 22px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: fixed;
     background: var(--brown);
     color: #FDF6EE;
     font-size: 12px;
     font-weight: 400;
     padding: 7px 11px;
     border-radius: 8px;
-    white-space: nowrap;
-    z-index: 99;
+    white-space: normal;
+    word-break: break-word;
+    z-index: 999;
     pointer-events: none;
     line-height: 1.5;
+    max-width: min(260px, calc(100vw - 32px));
+    box-sizing: border-box;
   }
-  .tooltip::before {
-    content: '';
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    border: 5px solid transparent;
-    border-right-color: var(--brown);
-  }
-  .info-wrap:hover .tooltip,
   .info-wrap.open .tooltip {
     display: block;
   }
@@ -638,7 +628,7 @@ foods.forEach((f, i) => {
       <div>
         <div class="food-name">
           ${f.name}
-          ${f.info ? `<span class="info-wrap" onclick="this.classList.toggle('open')">
+        ${f.info ? `<span class="info-wrap" id="tip-wrap-${i}">
             <button class="info-btn" type="button">?</button>
             <span class="tooltip">${f.info}</span>
           </span>` : ''}
@@ -683,6 +673,56 @@ foods.forEach((f, i) => {
   slider.addEventListener("input", onDrag);
   document.addEventListener("mouseup", endDrag);
   document.addEventListener("touchend", endDrag);
+});
+
+function positionTooltip(wrap) {
+  const tooltip = wrap.querySelector(".tooltip");
+  if (!tooltip) return;
+  const btn = wrap.querySelector(".info-btn");
+  const btnRect = btn.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const maxW = Math.min(260, vw - 32);
+  tooltip.style.maxWidth = maxW + "px";
+  tooltip.style.display = "block";
+  const tipW = tooltip.offsetWidth;
+  const tipH = tooltip.offsetHeight;
+  tooltip.style.display = "";
+  let left = btnRect.right + 8;
+  let top = btnRect.top + (btnRect.height / 2) - (tipH / 2);
+  if (left + tipW > vw - 8) {
+    left = btnRect.left - tipW - 8;
+  }
+  if (left < 8) left = 8;
+  if (top < 8) top = 8;
+  if (top + tipH > window.innerHeight - 8) top = window.innerHeight - tipH - 8;
+  tooltip.style.left = left + "px";
+  tooltip.style.top = top + "px";
+}
+
+let openTip = null;
+
+document.addEventListener("click", function(e) {
+  const btn = e.target.closest(".info-btn");
+  if (btn) {
+    const wrap = btn.closest(".info-wrap");
+    if (openTip && openTip !== wrap) {
+      openTip.classList.remove("open");
+    }
+    if (wrap.classList.contains("open")) {
+      wrap.classList.remove("open");
+      openTip = null;
+    } else {
+      wrap.classList.add("open");
+      positionTooltip(wrap);
+      openTip = wrap;
+    }
+    e.stopPropagation();
+    return;
+  }
+  if (openTip && !e.target.closest(".info-wrap")) {
+    openTip.classList.remove("open");
+    openTip = null;
+  }
 });
 </script>
 </body>

@@ -23,463 +23,199 @@
     --card-bg: #FFFAF5;
     --border: rgba(140,100,70,0.2);
     --border-strong: rgba(140,100,70,0.32);
-    --goal: 80;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 0 0 3rem;
-  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; padding: 0 0 3rem; }
 
   /* Header */
-  .header {
-    background: var(--blush);
-    padding: 2rem 1.5rem 1.75rem;
-    text-align: center;
-    border-bottom: 1px solid var(--blush-dark);
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 140px; height: 140px;
-    background: rgba(255,255,255,0.25);
-    border-radius: 50%;
-  }
-  .header::after {
-    content: '';
-    position: absolute;
-    bottom: -30px; left: -20px;
-    width: 100px; height: 100px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-  }
-  .header-icon {
-    font-size: 28px;
-    display: block;
-    margin-bottom: 6px;
-    position: relative;
-    z-index: 1;
-  }
-  .header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    font-weight: 500;
-    color: var(--brown);
-    letter-spacing: -0.3px;
-    position: relative;
-    z-index: 1;
-  }
-  .header p {
-    font-size: 13px;
-    color: var(--brown-light);
-    margin-top: 4px;
-    font-weight: 300;
-    position: relative;
-    z-index: 1;
-  }
+  .header { background: var(--blush); padding: 1.5rem 1.5rem 1.25rem; border-bottom: 1px solid var(--blush-dark); position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 140px; height: 140px; background: rgba(255,255,255,0.25); border-radius: 50%; }
+  .header::after { content: ''; position: absolute; bottom: -30px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.2); border-radius: 50%; }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+  .header-titles { text-align: left; }
+  .header-icon { font-size: 22px; display: block; margin-bottom: 3px; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 500; color: var(--brown); letter-spacing: -0.3px; }
+  .header p { font-size: 12px; color: var(--brown-light); margin-top: 2px; font-weight: 300; }
 
-  /* Main content */
-  .content {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 1.5rem 1.25rem 0;
-  }
+  /* Trophy button */
+  .trophy-btn { position: relative; width: 44px; height: 44px; border-radius: 12px; background: #FFFAF5; border: 1px solid var(--blush-dark); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .notif-dot { position: absolute; top: -4px; right: -4px; width: 11px; height: 11px; border-radius: 50%; background: #c0392b; border: 2px solid var(--blush); display: none; animation: ndpulse 1.8s infinite; }
+  @keyframes ndpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+  /* Content */
+  .content { max-width: 500px; margin: 0 auto; padding: 1.5rem 1.25rem 0; }
 
   /* Goal card */
-  .goal-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-strong);
-    border-radius: 20px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 16px rgba(180,130,100,0.08);
-  }
-  .goal-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 12px;
-  }
-  .goal-label {
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-muted);
-  }
-  .goal-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    color: var(--brown);
-    line-height: 1;
-  }
-  .goal-number .unit {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 300;
-    color: var(--text-muted);
-    margin-left: 2px;
-  }
-  .goal-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-align: right;
-    font-weight: 400;
-  }
-  .progress-track {
-    height: 10px;
-    background: var(--blush);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 6px;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, var(--terracotta-light), var(--terracotta));
-    transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
-    min-width: 0;
-  }
-  .progress-fill.over {
-    background: linear-gradient(90deg, #E8A98A, #c0392b);
-  }
-  .progress-fill.done {
-    background: linear-gradient(90deg, var(--sage), var(--sage-dark));
-  }
-  .progress-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
-
-  /* Status badge */
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: 10px;
-  }
+  .goal-card { background: var(--card-bg); border: 1px solid var(--border-strong); border-radius: 20px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 16px rgba(180,130,100,0.08); }
+  .goal-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .goal-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); }
+  .goal-number { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--brown); line-height: 1; }
+  .goal-number .unit { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; color: var(--text-muted); margin-left: 2px; }
+  .goal-sub { font-size: 12px; color: var(--text-muted); text-align: right; font-weight: 400; }
+  .progress-track { height: 10px; background: var(--blush); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+  .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--terracotta-light), var(--terracotta)); transition: width 0.35s cubic-bezier(0.4,0,0.2,1); }
+  .progress-fill.over { background: linear-gradient(90deg, #E8A98A, #c0392b); }
+  .progress-fill.done { background: linear-gradient(90deg, var(--sage), var(--sage-dark)); }
+  .progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); font-weight: 400; }
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 0 12px; border-radius: 20px; font-size: 12px; font-weight: 500; height: 32px; flex-shrink: 0; }
   .status-badge.under { background: var(--blush); color: var(--brown-light); }
   .status-badge.done { background: #dff0d8; color: #3a7a3a; }
   .status-badge.over { background: #fde8e8; color: #c0392b; }
 
-  /* Section title */
-  .section-title {
-    font-size: 11px;
+  /* Close day button */
+  .close-day-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-    margin-bottom: 0.75rem;
-    padding-left: 2px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1.5px solid var(--terracotta);
+    background: transparent;
+    color: var(--terracotta);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
   }
+  .close-day-btn:hover { background: var(--terracotta); color: #FDF6EE; }
+  .close-day-btn:active { transform: scale(0.97); }
+  .close-day-btn.done-today {
+    background: #dff0d8;
+    color: #3a7a3a;
+    border-color: #b0d8b0;
+    cursor: default;
+  }
+  .close-day-btn.done-today:hover { background: #dff0d8; color: #3a7a3a; }
+
+  /* Section title */
+  .section-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 0.75rem; padding-left: 2px; }
 
   /* Food cards */
   .food-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
-
-  .food-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1rem 1.25rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .food-card.active {
-    border-color: var(--blush-dark);
-    box-shadow: 0 2px 12px rgba(180,130,100,0.1);
-  }
-
-  .food-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 10px;
-    gap: 8px;
-  }
-  .food-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.3;
-  }
-  .food-portion {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 3px;
-    font-weight: 400;
-  }
-  .food-protein-display {
-    text-align: right;
-    min-width: 52px;
-    flex-shrink: 0;
-  }
-  .food-protein-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--terracotta);
-    line-height: 1;
-    transition: color 0.2s;
-  }
+  .food-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 1rem 1.25rem; transition: border-color 0.2s, box-shadow 0.2s; }
+  .food-card.active { border-color: var(--blush-dark); box-shadow: 0 2px 12px rgba(180,130,100,0.1); }
+  .food-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; }
+  .food-name { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .food-portion { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+  .food-protein-display { text-align: right; min-width: 52px; flex-shrink: 0; }
+  .food-protein-val { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--terracotta); line-height: 1; transition: color 0.2s; }
   .food-protein-val.zero { color: var(--text-muted); }
-  .food-protein-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
+  .food-protein-label { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+  .slider-row { display: flex; align-items: center; gap: 10px; }
+  input[type=range] { -webkit-appearance: none; appearance: none; flex: 1; height: 4px; background: var(--blush); border-radius: 4px; outline: none; cursor: grab; transition: background 0.2s; pointer-events: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: var(--terracotta); cursor: grab; border: 3px solid var(--warm-white); box-shadow: 0 1px 6px rgba(180,100,70,0.3); transition: transform 0.15s; pointer-events: all; }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.12); }
+  input[type=range]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.18); }
+  input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: var(--terracotta); cursor: grab; border: 3px solid var(--warm-white); box-shadow: 0 1px 6px rgba(180,100,70,0.3); pointer-events: all; }
+  input[type=range].dragging { pointer-events: all; }
+  .portion-tag { background: var(--blush); color: var(--brown); font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; min-width: 60px; text-align: center; white-space: nowrap; flex-shrink: 0; }
+  .portion-tag.zero { background: transparent; color: var(--text-muted); border: 1px solid var(--border-strong); }
 
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    appearance: none;
-    flex: 1;
-    height: 4px;
-    background: var(--blush);
-    border-radius: 4px;
-    outline: none;
-    cursor: grab;
-    transition: background 0.2s;
-    pointer-events: none;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--terracotta);
-    cursor: grab;
-    border: 3px solid var(--warm-white);
-    box-shadow: 0 1px 6px rgba(180,100,70,0.3);
-    transition: transform 0.15s, background 0.2s;
-    pointer-events: all;
-  }
-  input[type=range]::-webkit-slider-thumb:hover {
-    transform: scale(1.12);
-  }
-  input[type=range]::-webkit-slider-thumb:active {
-    cursor: grabbing;
-    transform: scale(1.18);
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--terracotta);
-    cursor: grab;
-    border: 3px solid var(--warm-white);
-    box-shadow: 0 1px 6px rgba(180,100,70,0.3);
-    pointer-events: all;
-  }
-  input[type=range].dragging {
-    pointer-events: all;
-  }
-
-  .portion-tag {
-    background: var(--blush);
-    color: var(--brown);
-    font-size: 11px;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    min-width: 60px;
-    text-align: center;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .portion-tag.zero {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border-strong);
-  }
+  /* Extra card */
+  .extra-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+  .extra-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .extra-card-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .extra-card-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+  .extra-protein-display { text-align: right; min-width: 52px; flex-shrink: 0; }
+  .extra-protein-val { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--terracotta); line-height: 1; }
+  .extra-protein-val.zero { color: var(--text-muted); }
+  .extra-protein-label { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+  .extra-input-row { display: flex; align-items: center; gap: 10px; }
+  .extra-input { flex: 1; height: 38px; border: 1px solid var(--border-strong); border-radius: 10px; background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); padding: 0 12px; outline: none; transition: border-color 0.2s; -moz-appearance: textfield; }
+  .extra-input::-webkit-outer-spin-button, .extra-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .extra-input:focus { border-color: var(--terracotta-light); }
+  .extra-unit { font-size: 13px; color: var(--text-muted); font-weight: 400; flex-shrink: 0; }
 
   /* Reset button */
-  .reset-btn {
-    width: 100%;
-    padding: 14px;
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    border-radius: 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    letter-spacing: 0.2px;
-  }
-  .reset-btn:hover {
-    background: var(--blush);
-    color: var(--brown);
-    border-color: var(--blush-dark);
-  }
+  .reset-btn { width: 100%; padding: 14px; background: transparent; border: 1px solid var(--border-strong); border-radius: 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; color: var(--text-muted); cursor: pointer; transition: background 0.2s, color 0.2s; letter-spacing: 0.2px; }
+  .reset-btn:hover { background: var(--blush); color: var(--brown); border-color: var(--blush-dark); }
   .reset-btn:active { transform: scale(0.99); }
 
-  /* Decoration dots */
-  .dots {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    margin: 1.5rem 0 0.5rem;
-  }
-  .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--blush-dark);
-    opacity: 0.5;
-  }
-
-  /* Extra protein card */
-  .extra-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-  }
-  .extra-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 10px;
-  }
-  .extra-card-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-  }
-  .extra-card-hint {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 3px;
-    font-weight: 400;
-  }
-  .extra-protein-display {
-    text-align: right;
-    min-width: 52px;
-    flex-shrink: 0;
-  }
-  .extra-protein-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--terracotta);
-    line-height: 1;
-  }
-  .extra-protein-val.zero { color: var(--text-muted); }
-  .extra-protein-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
-  .extra-input-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .extra-input {
-    flex: 1;
-    height: 38px;
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    background: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: var(--text);
-    padding: 0 12px;
-    outline: none;
-    transition: border-color 0.2s;
-    -moz-appearance: textfield;
-  }
-  .extra-input::-webkit-outer-spin-button,
-  .extra-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .extra-input:focus {
-    border-color: var(--terracotta-light);
-  }
-  .extra-unit {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 400;
-    flex-shrink: 0;
-  }
+  /* Dots */
+  .dots { display: flex; justify-content: center; gap: 5px; margin: 1.5rem 0 0.5rem; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blush-dark); opacity: 0.5; }
 
   /* Info tooltip */
-  .info-wrap {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    margin-left: 5px;
-    vertical-align: middle;
-  }
-  .info-btn {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--blush-dark);
-    color: var(--brown);
-    font-size: 10px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    line-height: 1;
-    padding: 0;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .info-btn:hover { background: var(--blush-dark); }
-  .tooltip {
-    display: none;
-    position: fixed;
-    background: var(--brown);
-    color: #FDF6EE;
-    font-size: 12px;
-    font-weight: 400;
-    padding: 7px 11px;
-    border-radius: 8px;
-    white-space: normal;
-    word-break: break-word;
-    z-index: 999;
-    pointer-events: none;
-    line-height: 1.5;
-    max-width: min(260px, calc(100vw - 32px));
-    box-sizing: border-box;
-  }
-  .info-wrap.open .tooltip {
-    display: block;
-  }
+  .info-wrap { position: relative; display: inline-flex; align-items: center; margin-left: 5px; vertical-align: middle; }
+  .info-btn { width: 16px; height: 16px; border-radius: 50%; background: var(--blush-dark); color: var(--brown); font-size: 10px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; padding: 0; font-family: 'DM Sans', sans-serif; }
+  .tooltip { display: none; position: fixed; background: var(--brown); color: #FDF6EE; font-size: 12px; font-weight: 400; padding: 7px 11px; border-radius: 8px; white-space: normal; word-break: break-word; z-index: 999; pointer-events: none; line-height: 1.5; max-width: min(260px, calc(100vw - 32px)); box-sizing: border-box; }
+  .info-wrap.open .tooltip { display: block; }
+
+  /* Achievement overlay */
+  .ach-overlay { display: none; position: fixed; inset: 0; background: rgba(44,28,18,0.5); z-index: 200; align-items: center; justify-content: center; padding: 1rem; }
+  .ach-overlay.open { display: flex; }
+  .ach-popup { background: #FFFAF5; border-radius: 18px; border: 1px solid var(--blush-dark); width: 100%; max-width: 360px; overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
+  .ach-header { background: var(--blush); padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--blush-dark); gap: 8px; flex-shrink: 0; }
+  .ach-title { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--brown); font-weight: 500; }
+  .ach-streak-badge { font-size: 11px; color: var(--brown-light); background: #FFFAF5; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--blush-dark); white-space: nowrap; }
+  .ach-close { width: 26px; height: 26px; border-radius: 50%; background: var(--blush-dark); border: none; cursor: pointer; font-size: 13px; color: var(--brown); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ach-body { overflow-y: auto; flex: 1; }
+  .ach-calendar { padding: 0.75rem; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; position: relative; }
+  .ach-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 600; position: relative; overflow: visible; }
+  .ach-day.future { background: #F1EDE7; color: #C4A898; }
+  .ach-day.done { background: #C97B5A; color: #FDF6EE; }
+  .ach-day.next { background: #F1EDE7; color: var(--text-light); border: 1.5px dashed #C97B5A; }
+  .ach-day.reward-locked { background: #7A5240; color: #FDF6EE; }
+  .ach-day.reward-done { background: #B56640; color: #FDF6EE; }
+  .ach-day .ricon { font-size: 22px; line-height: 1; }
+  .ach-day.anim-pop { animation: achpop 0.55s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+  .ach-day.anim-glow { animation: achglow 0.65s ease-out both; }
+  @keyframes achpop { 0%{transform:scale(1)} 25%{transform:scale(1.4)} 50%{transform:scale(0.85)} 70%{transform:scale(1.15)} 85%{transform:scale(0.96)} 100%{transform:scale(1)} }
+  @keyframes achglow { 0%{transform:scale(1);background:#E8A98A} 35%{transform:scale(1.3)} 100%{transform:scale(1);background:#B56640} }
+  .reward-banner { margin: 0 0.75rem 0.75rem; padding: 0.75rem 0.9rem; background: #FFF3EC; border: 1px solid var(--blush-dark); border-radius: 10px; font-size: 12px; color: var(--brown); line-height: 1.6; }
+  .reward-banner-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; color: var(--brown-light); margin-bottom: 4px; }
+  .ach-footer { padding: 0.75rem; border-top: 1px solid #F1EDE7; flex-shrink: 0; }
+  .ach-close-btn { width: 100%; padding: 10px; background: var(--terracotta); color: #FDF6EE; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+  .ach-close-btn:hover { background: var(--brown-light); }
+
+  /* Particles */
+  .particle { position: absolute; width: 10px; height: 10px; border-radius: 50%; pointer-events: none; z-index: 100; animation: pflyg var(--dur) ease-out forwards; animation-delay: var(--delay); }
+  .particle.star { width: 0; height: 0; background: transparent; border-radius: 0; animation: sfly var(--dur) ease-out forwards; animation-delay: var(--delay); }
+  @keyframes pflyg { 0%{transform:translate(0,0) scale(1);opacity:1} 100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0} }
+  @keyframes sfly { 0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:1;width:12px;height:12px;background:var(--color);border-radius:2px} 40%{opacity:1} 100%{transform:translate(var(--tx),var(--ty)) scale(0) rotate(180deg);opacity:0;width:12px;height:12px;background:var(--color);border-radius:2px} }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <span class="header-icon">🌿</span>
-  <h1>Baby Protein Tracker</h1>
-  <p>Tagesprotein für Mutter & Kind</p>
+  <div class="header-inner">
+    <div class="header-titles">
+      <span class="header-icon">🌿</span>
+      <h1>Baby Protein Tracker</h1>
+      <p>Tagesprotein für Mutter &amp; Kind</p>
+    </div>
+    <div class="trophy-btn" id="trophy-btn" onclick="openAchievements()">
+      🏆
+      <div class="notif-dot" id="notif-dot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Achievement Popup -->
+<div class="ach-overlay" id="ach-overlay">
+  <div class="ach-popup">
+    <div class="ach-header">
+      <div class="ach-title">Deine Streaks</div>
+      <div class="ach-streak-badge" id="ach-streak-label">0 Tage 🔥</div>
+      <button class="ach-close" onclick="closeAchievements()">✕</button>
+    </div>
+    <div class="ach-body">
+      <div class="ach-calendar" id="ach-cal"></div>
+      <div class="reward-banner" id="reward-banner" style="display:none">
+        <div class="reward-banner-label" id="reward-banner-label"></div>
+        <div id="reward-banner-text"></div>
+      </div>
+    </div>
+    <div class="ach-footer">
+      <button class="ach-close-btn" onclick="closeAchievements()">Schließen</button>
+    </div>
+  </div>
 </div>
 
 <div class="content">
-
   <div class="goal-card">
     <div class="goal-row">
       <span class="goal-label">Protein heute</span>
@@ -491,12 +227,11 @@
     <div class="progress-track">
       <div class="progress-fill" id="progress-fill" style="width:0%"></div>
     </div>
-    <div class="progress-labels">
-      <span>0g</span>
-      <span>40g</span>
-      <span>80g</span>
+    <div class="progress-labels"><span>0g</span><span>40g</span><span>80g</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;min-height:32px;">
+      <div id="status-badge" class="status-badge under" style="margin-top:0;height:32px;display:flex;align-items:center;">Noch 80g bis zum Tagesziel</div>
+      <button id="close-day-btn" class="close-day-btn" style="height:32px;display:flex;align-items:center;" onclick="closeDayManual()">Tag abschließen</button>
     </div>
-    <div id="status-badge" class="status-badge under">Noch 80g bis zum Tagesziel</div>
   </div>
 
   <div class="section-title">Lebensmittel</div>
@@ -521,64 +256,101 @@
   </div>
 
   <button class="reset-btn" onclick="resetAll()">↺ Alle Portionen zurücksetzen</button>
-
-  <div class="dots">
-    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-  </div>
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
 </div>
 
 <script>
+// ── FOODS ──────────────────────────────────────────────────────────────────
 const foods = [
   { name: "Soja Skyr Alternative",           portion: "200g",                    ppP: 12  },
   { name: "High Protein Müsli Schoko Nuss",  portion: "100g",                    ppP: 30  },
   { name: "Hanfsamen",                       portion: "3 EL",                    ppP: 10  },
-  { name: "Nüsse",                           portion: "30g",                     ppP: 7,   info: "Ca. 3 Esslöffel (Mandeln, Haselnüsse, Erdnüsse oder Cashews)" },
+  { name: "Nüsse",                           portion: "30g",                     ppP: 7,  info: "Ca. 3 Esslöffel (Mandeln, Haselnüsse, Erdnüsse oder Cashews)" },
   { name: "Edamame",                         portion: "100g Bohnen / 50g Kerne", ppP: 5   },
-  { name: "Wasa Protein Knäckebrot",         portion: "50g",                     ppP: 10,  info: "Ca. 3 Scheiben (je ~15–17g pro Scheibe)" },
+  { name: "Wasa Protein Knäckebrot",         portion: "50g",                     ppP: 10, info: "Ca. 3 Scheiben (je ~15–17g pro Scheibe)" },
   { name: "Lupinen",                         portion: "50g",                     ppP: 5   },
   { name: "Hummus",                          portion: "50g",                     ppP: 3   },
   { name: "Tofu",                            portion: "100g",                    ppP: 17  },
   { name: "Tempeh",                          portion: "100g",                    ppP: 19  },
-  { name: "Ei",                             portion: "1 Ei",                    ppP: 7   },
+  { name: "Ei",                              portion: "1 Ei",                    ppP: 7   },
   { name: "Linsen (ungekocht)",              portion: "100g",                    ppP: 25  },
   { name: "Rote / Schwarze Bohnen (ung.)",   portion: "100g",                    ppP: 22  },
-  { name: "Kürbiskerne",                     portion: "30g",                     ppP: 9,   info: "Ca. 3 Esslöffel (1 EL ≈ 10g)" },
+  { name: "Kürbiskerne",                     portion: "30g",                     ppP: 9,  info: "Ca. 3 Esslöffel (1 EL ≈ 10g)" },
   { name: "Soja-Schnetzel",                  portion: "30g",                     ppP: 15  }
 ];
 
-const GOAL = 80;
+// ── REWARDS ────────────────────────────────────────────────────────────────
+const REWARDS = {
+  7:   { icon:"🦋", text:"Juhuuu, eine ganze Woche geschafft! Ich lade dich zum Kinoabend ein 🎥" },
+  14:  { icon:"🍼", text:"Schon wieder eine Woche - wow! Deine Belohnung: Leckeres Eis bei Kaemena 🍦" },
+  21:  { icon:"♥️", text:"Drei Wochen schon, die Zeit fliegt! Du bist die Beste. Zeig mir deine Streak für die Belohnung 🏆" },
+  28:  { icon:"🐣", text:"Ein ganzer Monat voller Proteine! Ich liebe dich. Eine halbe Stunde Rückenmassage für dich ♥️" },
+  35:  { icon:"🦋", text:"Fünf Wochen, olé olé! Super toll! Deine Belohnung: Cappuccino to go beim Spaziergang in der Sonne ☀️" },
+  42:  { icon:"🍼", text:"42 Tage hast du unser Baby schon mit Proteinen versorgt. Ich liebe dich! Dafür koche ich dir ein 3-Gänge-Menü 👨🏼‍🍳" },
+  49:  { icon:"♥️", text:"7 Wochen jetzt schon, wowowow! Zeig mir deine Streak für deine Belohnung 🏆" },
+  56:  { icon:"🐣", text:"Woche 8, hammermäßig! Eine ganze Stunde Rückenmassage wartet auf dich ♥️" },
+  63:  { icon:"🦋", text:"Ei Ei Eiweiß, völlig gute Leistung. Belohnung? Ein Abend im Il Blu 🍕🥗" },
+  70:  { icon:"🍼", text:"ZEHN WOCHEN - 10/10 Leistung! Babystark! Der Frühjahrsputz geht auf mich - ganze Bude!" },
+  77:  { icon:"♥️", text:"Woche 11 – kommt bald deine Belohnung! 🎁" },
+  84:  { icon:"🐣", text:"Woche 12 – kommt bald deine Belohnung! 🎁" },
+  91:  { icon:"🦋", text:"Woche 13 – kommt bald deine Belohnung! 🎁" },
+  98:  { icon:"🍼", text:"Woche 14 – kommt bald deine Belohnung! 🎁" },
+  105: { icon:"♥️", text:"Woche 15 – kommt bald deine Belohnung! 🎁" },
+  112: { icon:"🐣", text:"Woche 16 – kommt bald deine Belohnung! 🎁" },
+  119: { icon:"🦋", text:"Woche 17 – kommt bald deine Belohnung! 🎁" },
+  126: { icon:"🍼", text:"Woche 18 – kommt bald deine Belohnung! 🎁" },
+  133: { icon:"♥️", text:"Woche 19 – kommt bald deine Belohnung! 🎁" },
+  140: { icon:"🐣", text:"Woche 20 – kommt bald deine Belohnung! 🎁" },
+  147: { icon:"🦋", text:"Woche 21 – kommt bald deine Belohnung! 🎁" },
+  154: { icon:"🍼", text:"Woche 22 – kommt bald deine Belohnung! 🎁" },
+  161: { icon:"♥️", text:"Woche 23 – kommt bald deine Belohnung! 🎁" },
+  168: { icon:"🐣", text:"Woche 24 – kommt bald deine Belohnung! 🎁" },
+  175: { icon:"🦋", text:"Woche 25 – kommt bald deine Belohnung! 🎁" },
+  182: { icon:"🍼", text:"Woche 26 – kommt bald deine Belohnung! 🎁" },
+  189: { icon:"🐣", text:"27 Wochen – das Baby kommt bald! Du bist unglaublich! 🎉" }
+};
 
+const GOAL = 80;
+const GOLD_COLORS = ["#F5D060","#F0C040","#FFE566","#E8A920","#FADC80","#FFF0A0","#D4A017","#F5C842","#fff8d0","#C8980E"];
+
+// ── LOCALSTORAGE ────────────────────────────────────────────────────────────
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem("bpt_state") || "{}");
+    return { streak: s.streak || 0, lastDate: s.lastDate || null, pendingAnim: s.pendingAnim || false };
+  } catch(e) { return { streak: 0, lastDate: null, pendingAnim: false }; }
+}
+function saveState(streak, lastDate, pendingAnim) {
+  localStorage.setItem("bpt_state", JSON.stringify({ streak, lastDate, pendingAnim }));
+}
+
+let state = loadState();
+
+// ── GOAL / PROTEIN ──────────────────────────────────────────────────────────
 function portionLabel(v) {
   if (v === 0) return "0";
   if (v === 1) return "1 Portion";
   return v + " Port.";
 }
-
 function getTotal() {
-  const fromSliders = foods.reduce((sum, f, i) => {
-    return sum + parseFloat(document.getElementById("sl-" + i).value) * f.ppP;
-  }, 0);
+  const fromSliders = foods.reduce((sum, f, i) => sum + parseFloat(document.getElementById("sl-"+i).value) * f.ppP, 0);
   const extra = parseFloat(document.getElementById("extra-input").value) || 0;
   return fromSliders + extra;
 }
-
 function updateExtra() {
   const val = parseFloat(document.getElementById("extra-input").value) || 0;
-  const display = document.getElementById("extra-val-display");
-  display.textContent = Math.round(val) + "g";
-  display.className = "extra-protein-val" + (val === 0 ? " zero" : "");
+  const d = document.getElementById("extra-val-display");
+  d.textContent = Math.round(val) + "g";
+  d.className = "extra-protein-val" + (val === 0 ? " zero" : "");
   updateTotal();
 }
-
 function updateTotal() {
   const total = Math.round(getTotal());
   document.getElementById("total-display").innerHTML = total + '<span class="unit">g</span>';
-
   const pct = Math.min((total / GOAL) * 100, 100);
   const fill = document.getElementById("progress-fill");
   fill.style.width = pct + "%";
   fill.className = "progress-fill" + (total > GOAL ? " over" : total >= GOAL ? " done" : "");
-
   const badge = document.getElementById("status-badge");
   if (total >= GOAL) {
     badge.className = "status-badge done";
@@ -591,48 +363,54 @@ function updateTotal() {
     badge.textContent = "Noch " + (GOAL - total) + "g bis zum Tagesziel";
   }
 }
-
+function closeDayManual() {
+  const today = new Date().toDateString();
+  const btn = document.getElementById("close-day-btn");
+  if (state.lastDate === today) return;
+  state.streak++;
+  state.lastDate = today;
+  state.pendingAnim = true;
+  saveState(state.streak, state.lastDate, state.pendingAnim);
+  document.getElementById("notif-dot").style.display = "block";
+  btn.textContent = "✓ Abgeschlossen";
+  btn.classList.add("done-today");
+}
+function initCloseDayBtn() {
+  const today = new Date().toDateString();
+  const btn = document.getElementById("close-day-btn");
+  if (state.lastDate === today) {
+    btn.textContent = "✓ Abgeschlossen";
+    btn.classList.add("done-today");
+  }
+}
 function updateCard(i) {
-  const slider = document.getElementById("sl-" + i);
+  const slider = document.getElementById("sl-"+i);
   const val = parseFloat(slider.value);
   const protein = Math.round(val * foods[i].ppP);
-
-  document.getElementById("pval-" + i).textContent = protein + "g";
-  document.getElementById("pval-" + i).className = "food-protein-val" + (val === 0 ? " zero" : "");
-
-  const tag = document.getElementById("ptag-" + i);
+  document.getElementById("pval-"+i).textContent = protein + "g";
+  document.getElementById("pval-"+i).className = "food-protein-val" + (val === 0 ? " zero" : "");
+  const tag = document.getElementById("ptag-"+i);
   tag.textContent = portionLabel(val);
   tag.className = "portion-tag" + (val === 0 ? " zero" : "");
-
-  document.getElementById("card-" + i).className = "food-card" + (val > 0 ? " active" : "");
-
+  document.getElementById("card-"+i).className = "food-card" + (val > 0 ? " active" : "");
   updateTotal();
 }
-
 function resetAll() {
-  foods.forEach((f, i) => {
-    document.getElementById("sl-" + i).value = 0;
-    updateCard(i);
-  });
+  foods.forEach((f, i) => { document.getElementById("sl-"+i).value = 0; updateCard(i); });
   document.getElementById("extra-input").value = "";
   updateExtra();
 }
 
+// ── FOOD CARDS ──────────────────────────────────────────────────────────────
 const list = document.getElementById("food-list");
 foods.forEach((f, i) => {
   const card = document.createElement("div");
   card.className = "food-card";
-  card.id = "card-" + i;
+  card.id = "card-"+i;
   card.innerHTML = `
     <div class="food-top">
       <div>
-        <div class="food-name">
-          ${f.name}
-        ${f.info ? `<span class="info-wrap" id="tip-wrap-${i}">
-            <button class="info-btn" type="button">?</button>
-            <span class="tooltip">${f.info}</span>
-          </span>` : ''}
-        </div>
+        <div class="food-name">${f.name}${f.info ? `<span class="info-wrap" id="tip-wrap-${i}"><button class="info-btn" type="button">?</button><span class="tooltip">${f.info}</span></span>` : ''}</div>
         <div class="food-portion">1 Portion = ${f.portion} &middot; ${f.ppP}g Protein</div>
       </div>
       <div class="food-protein-display">
@@ -643,95 +421,146 @@ foods.forEach((f, i) => {
     <div class="slider-row">
       <input type="range" id="sl-${i}" min="0" max="3" step="1" value="0">
       <span class="portion-tag zero" id="ptag-${i}">0</span>
-    </div>
-  `;
+    </div>`;
   list.appendChild(card);
-
-  const slider = document.getElementById("sl-" + i);
+  const slider = document.getElementById("sl-"+i);
   let isDragging = false;
-
-  function startDrag(e) {
-    isDragging = true;
-    slider.classList.add("dragging");
-    e.stopPropagation();
-  }
-
-  function onDrag(e) {
-    if (!isDragging) return;
-    updateCard(i);
-  }
-
-  function endDrag() {
-    if (!isDragging) return;
-    isDragging = false;
-    slider.classList.remove("dragging");
-    updateCard(i);
-  }
-
-  slider.addEventListener("mousedown", startDrag);
-  slider.addEventListener("touchstart", startDrag, { passive: true });
-  slider.addEventListener("input", onDrag);
-  document.addEventListener("mouseup", endDrag);
-  document.addEventListener("touchend", endDrag);
+  slider.addEventListener("mousedown", e => { isDragging=true; slider.classList.add("dragging"); e.stopPropagation(); });
+  slider.addEventListener("touchstart", e => { isDragging=true; slider.classList.add("dragging"); e.stopPropagation(); }, { passive:true });
+  slider.addEventListener("input", () => { if(isDragging) updateCard(i); });
+  document.addEventListener("mouseup", () => { if(isDragging){ isDragging=false; slider.classList.remove("dragging"); updateCard(i); } });
+  document.addEventListener("touchend", () => { if(isDragging){ isDragging=false; slider.classList.remove("dragging"); updateCard(i); } });
 });
 
+// ── TOOLTIP ─────────────────────────────────────────────────────────────────
 function positionTooltip(wrap) {
-  const tooltip = wrap.querySelector(".tooltip");
-  if (!tooltip) return;
+  const tip = wrap.querySelector(".tooltip"); if(!tip) return;
   const btn = wrap.querySelector(".info-btn");
-  const btnRect = btn.getBoundingClientRect();
-  const vw = window.innerWidth;
-  const maxW = Math.min(260, vw - 32);
-  tooltip.style.maxWidth = maxW + "px";
-  tooltip.style.display = "block";
-  const tipW = tooltip.offsetWidth;
-  const tipH = tooltip.offsetHeight;
-  tooltip.style.display = "";
-  let left = btnRect.right + 8;
-  let top = btnRect.top + (btnRect.height / 2) - (tipH / 2);
-  if (left + tipW > vw - 8) {
-    left = btnRect.left - tipW - 8;
-  }
-  if (left < 8) left = 8;
-  if (top < 8) top = 8;
-  if (top + tipH > window.innerHeight - 8) top = window.innerHeight - tipH - 8;
-  tooltip.style.left = left + "px";
-  tooltip.style.top = top + "px";
+  const br = btn.getBoundingClientRect(), vw = window.innerWidth;
+  const maxW = Math.min(260, vw-32);
+  tip.style.maxWidth = maxW+"px"; tip.style.display="block";
+  const tw = tip.offsetWidth, th = tip.offsetHeight; tip.style.display="";
+  let left = br.right+8, top = br.top+(br.height/2)-(th/2);
+  if(left+tw > vw-8) left = br.left-tw-8;
+  if(left<8) left=8; if(top<8) top=8;
+  if(top+th > window.innerHeight-8) top=window.innerHeight-th-8;
+  tip.style.left=left+"px"; tip.style.top=top+"px";
 }
-
 let openTip = null;
+function closeOpenTip() { if(openTip){ openTip.classList.remove("open"); openTip=null; } }
+window.addEventListener("scroll", closeOpenTip, { passive:true });
+document.addEventListener("click", e => {
+  const btn = e.target.closest(".info-btn");
+  if(btn) {
+    const wrap = btn.closest(".info-wrap");
+    if(openTip && openTip!==wrap) openTip.classList.remove("open");
+    if(wrap.classList.contains("open")){ wrap.classList.remove("open"); openTip=null; }
+    else { wrap.classList.add("open"); positionTooltip(wrap); openTip=wrap; }
+    e.stopPropagation(); return;
+  }
+  if(openTip && !e.target.closest(".info-wrap")) closeOpenTip();
+});
 
-function closeOpenTip() {
-  if (openTip) {
-    openTip.classList.remove("open");
-    openTip = null;
+// ── ACHIEVEMENTS ────────────────────────────────────────────────────────────
+function getCalendarWindow(streak) {
+  // Rolling window: always show 28 days, shift after every 2 completed weeks
+  // Window starts shift after streak >= 14, removing first 7 days
+  const shift = Math.max(0, Math.floor((streak - 14) / 7) + 1) * 7;
+  const windowStart = Math.floor(shift / 7) * 7 + 1;
+  const windowEnd = windowStart + 27;
+  return { start: windowStart, end: windowEnd };
+}
+
+function spawnParticles(el) {
+  const cal = document.getElementById("ach-cal");
+  const rect = el.getBoundingClientRect(), calRect = cal.getBoundingClientRect();
+  const cx = rect.left-calRect.left+rect.width/2, cy = rect.top-calRect.top+rect.height/2;
+  const count = 20;
+  for(let i=0; i<count; i++) {
+    const p = document.createElement("div");
+    const angle = (360/count)*i+(Math.random()*20-10);
+    const dist = 55+Math.random()*55;
+    const rad = angle*Math.PI/180, tx=Math.cos(rad)*dist, ty=Math.sin(rad)*dist;
+    const color = GOLD_COLORS[Math.floor(Math.random()*GOLD_COLORS.length)];
+    const dur = (1.8+Math.random()*1.4).toFixed(2)+"s";
+    const delay = (Math.random()*0.3).toFixed(2)+"s";
+    const isStar = Math.random()>0.4;
+    p.className = "particle"+(isStar?" star":"");
+    p.style.cssText = `left:${cx}px;top:${cy}px;--color:${color};--tx:${tx}px;--ty:${ty}px;--dur:${dur};--delay:${delay}s;`;
+    if(!isStar) p.style.background=color;
+    cal.appendChild(p);
+    setTimeout(()=>p.remove(), 2600+parseFloat(delay)*1000);
   }
 }
 
-window.addEventListener("scroll", closeOpenTip, { passive: true });
+function buildCalendar(animate) {
+  const cal = document.getElementById("ach-cal");
+  cal.innerHTML = "";
+  const streak = state.streak;
+  const { start, end } = getCalendarWindow(streak);
 
-document.addEventListener("click", function(e) {
-  const btn = e.target.closest(".info-btn");
-  if (btn) {
-    const wrap = btn.closest(".info-wrap");
-    if (openTip && openTip !== wrap) {
-      openTip.classList.remove("open");
-    }
-    if (wrap.classList.contains("open")) {
-      wrap.classList.remove("open");
-      openTip = null;
+  for(let d=start; d<=end; d++) {
+    const div = document.createElement("div");
+    div.id = "achday-"+d;
+    const isReward = !!REWARDS[d];
+    if(d < streak) {
+      div.className = isReward ? "ach-day reward-done" : "ach-day done";
+      div.innerHTML = isReward ? `<span class="ricon">${REWARDS[d].icon}</span>` : d;
+    } else if(d === streak) {
+      div.className = isReward ? "ach-day reward-done" : "ach-day done";
+      div.innerHTML = isReward ? `<span class="ricon">${REWARDS[d].icon}</span>` : d;
+    } else if(d === streak+1) {
+      div.className = "ach-day next";
+      div.textContent = d;
     } else {
-      wrap.classList.add("open");
-      positionTooltip(wrap);
-      openTip = wrap;
+      div.className = isReward ? "ach-day reward-locked" : "ach-day future";
+      div.innerHTML = isReward ? `<span class="ricon">${REWARDS[d].icon}</span>` : d;
     }
-    e.stopPropagation();
-    return;
+    cal.appendChild(div);
   }
-  if (openTip && !e.target.closest(".info-wrap")) {
-    closeOpenTip();
+
+  document.getElementById("ach-streak-label").textContent = streak+" "+(streak===1?"Tag":"Tage")+" 🔥";
+
+  const rb = document.getElementById("reward-banner");
+  const lastReward = Object.keys(REWARDS).map(Number).filter(x=>x<=streak).sort((a,b)=>b-a)[0];
+  if(lastReward && REWARDS[lastReward]) {
+    document.getElementById("reward-banner-label").textContent = "Tag "+lastReward+" – Belohnung freigeschaltet!";
+    document.getElementById("reward-banner-text").textContent = REWARDS[lastReward].text;
+    rb.style.display = "block";
+  } else {
+    rb.style.display = "none";
   }
+
+  if(animate && streak > 0) {
+    const isReward = !!REWARDS[streak];
+    const animClass = isReward ? "anim-glow" : "anim-pop";
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const t = document.getElementById("achday-"+streak);
+      if(!t) return;
+      t.classList.add(animClass);
+      t.addEventListener("animationend",()=>t.classList.remove(animClass),{once:true});
+      setTimeout(()=>spawnParticles(t), 80);
+    }));
+  }
+}
+
+function openAchievements() {
+  document.getElementById("ach-overlay").classList.add("open");
+  const doAnimate = state.pendingAnim;
+  if(doAnimate) { state.pendingAnim=false; saveState(state.streak,state.lastDate,false); }
+  document.getElementById("notif-dot").style.display="none";
+  buildCalendar(doAnimate);
+}
+function closeAchievements() {
+  document.getElementById("ach-overlay").classList.remove("open");
+}
+document.getElementById("ach-overlay").addEventListener("click", e => {
+  if(e.target === document.getElementById("ach-overlay")) closeAchievements();
 });
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+if(state.pendingAnim) document.getElementById("notif-dot").style.display="block";
+initCloseDayBtn();
 </script>
 </body>
 </html>

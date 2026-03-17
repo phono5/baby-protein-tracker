@@ -420,6 +420,64 @@
     font-weight: 400;
     flex-shrink: 0;
   }
+
+  /* Info tooltip */
+  .info-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  .info-btn {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--blush-dark);
+    color: var(--brown);
+    font-size: 10px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    padding: 0;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .info-btn:hover { background: var(--blush-dark); }
+  .tooltip {
+    display: none;
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--brown);
+    color: #FDF6EE;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 7px 11px;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 99;
+    pointer-events: none;
+    line-height: 1.5;
+  }
+  .tooltip::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: var(--brown);
+  }
+  .info-wrap:hover .tooltip,
+  .info-wrap.open .tooltip {
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -481,20 +539,21 @@
 
 <script>
 const foods = [
-  { name: "Soja Skyr Alternative",           portion: "200g",                    ppP: 12 },
-  { name: "High Protein Müsli Schoko Nuss",  portion: "100g",                    ppP: 30 },
-  { name: "Hanfsamen",                       portion: "3 EL",                    ppP: 10 },
-  { name: "Nüsse",                           portion: "30g",                     ppP: 7  },
-  { name: "Edamame",                         portion: "100g Bohnen / 50g Kerne", ppP: 5  },
-  { name: "Wasa Protein Knäckebrot",         portion: "50g",                     ppP: 10 },
-  { name: "Lupinen",                         portion: "50g",                     ppP: 5  },
-  { name: "Hummus",                          portion: "50g",                     ppP: 3  },
-  { name: "Tofu",                            portion: "100g",                    ppP: 17 },
-  { name: "Tempeh",                          portion: "100g",                    ppP: 19 },
-  { name: "Ei",                             portion: "1 Ei",                    ppP: 7  },
-  { name: "Linsen (gekocht)",               portion: "100g",                    ppP: 9  },
-  { name: "Rote / Schwarze Bohnen (gek.)",  portion: "100g",                    ppP: 9  },
-  { name: "Kürbiskerne",                    portion: "30g",                     ppP: 9  }
+  { name: "Soja Skyr Alternative",           portion: "200g",                    ppP: 12  },
+  { name: "High Protein Müsli Schoko Nuss",  portion: "100g",                    ppP: 30  },
+  { name: "Hanfsamen",                       portion: "3 EL",                    ppP: 10  },
+  { name: "Nüsse",                           portion: "30g",                     ppP: 7,   info: "Ca. 3 Esslöffel (Mandeln, Haselnüsse, Erdnüsse oder Cashews)" },
+  { name: "Edamame",                         portion: "100g Bohnen / 50g Kerne", ppP: 5   },
+  { name: "Wasa Protein Knäckebrot",         portion: "50g",                     ppP: 10,  info: "Ca. 3 Scheiben (je ~15–17g pro Scheibe)" },
+  { name: "Lupinen",                         portion: "50g",                     ppP: 5   },
+  { name: "Hummus",                          portion: "50g",                     ppP: 3   },
+  { name: "Tofu",                            portion: "100g",                    ppP: 17  },
+  { name: "Tempeh",                          portion: "100g",                    ppP: 19  },
+  { name: "Ei",                             portion: "1 Ei",                    ppP: 7   },
+  { name: "Linsen (ungekocht)",              portion: "100g",                    ppP: 25  },
+  { name: "Rote / Schwarze Bohnen (ung.)",   portion: "100g",                    ppP: 22  },
+  { name: "Kürbiskerne",                     portion: "30g",                     ppP: 9,   info: "Ca. 3 Esslöffel (1 EL ≈ 10g)" },
+  { name: "Soja-Schnetzel",                  portion: "30g",                     ppP: 15  }
 ];
 
 const GOAL = 80;
@@ -577,7 +636,13 @@ foods.forEach((f, i) => {
   card.innerHTML = `
     <div class="food-top">
       <div>
-        <div class="food-name">${f.name}</div>
+        <div class="food-name">
+          ${f.name}
+          ${f.info ? `<span class="info-wrap" onclick="this.classList.toggle('open')">
+            <button class="info-btn" type="button">?</button>
+            <span class="tooltip">${f.info}</span>
+          </span>` : ''}
+        </div>
         <div class="food-portion">1 Portion = ${f.portion} &middot; ${f.ppP}g Protein</div>
       </div>
       <div class="food-protein-display">

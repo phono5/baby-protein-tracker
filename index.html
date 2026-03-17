@@ -255,32 +255,42 @@
     background: var(--blush);
     border-radius: 4px;
     outline: none;
-    cursor: pointer;
+    cursor: grab;
     transition: background 0.2s;
+    pointer-events: none;
   }
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--terracotta);
-    cursor: pointer;
+    cursor: grab;
     border: 3px solid var(--warm-white);
     box-shadow: 0 1px 6px rgba(180,100,70,0.3);
     transition: transform 0.15s, background 0.2s;
+    pointer-events: all;
   }
   input[type=range]::-webkit-slider-thumb:hover {
-    transform: scale(1.1);
+    transform: scale(1.12);
+  }
+  input[type=range]::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.18);
   }
   input[type=range]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--terracotta);
-    cursor: pointer;
+    cursor: grab;
     border: 3px solid var(--warm-white);
     box-shadow: 0 1px 6px rgba(180,100,70,0.3);
+    pointer-events: all;
+  }
+  input[type=range].dragging {
+    pointer-events: all;
   }
 
   .portion-tag {
@@ -337,6 +347,79 @@
     background: var(--blush-dark);
     opacity: 0.5;
   }
+
+  /* Extra protein card */
+  .extra-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .extra-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .extra-card-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .extra-card-hint {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 3px;
+    font-weight: 300;
+  }
+  .extra-protein-display {
+    text-align: right;
+    min-width: 52px;
+    flex-shrink: 0;
+  }
+  .extra-protein-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .extra-protein-val.zero { color: var(--text-light); }
+  .extra-protein-label {
+    font-size: 10px;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+  .extra-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .extra-input {
+    flex: 1;
+    height: 38px;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    padding: 0 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  .extra-input::-webkit-outer-spin-button,
+  .extra-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .extra-input:focus {
+    border-color: var(--terracotta-light);
+  }
+  .extra-unit {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -371,6 +454,24 @@
   <div class="section-title">Lebensmittel</div>
   <div class="food-list" id="food-list"></div>
 
+  <div class="section-title">Sonstiges</div>
+  <div class="extra-card">
+    <div class="extra-card-top">
+      <div>
+        <div class="extra-card-name">Weitere Lebensmittel</div>
+        <div class="extra-card-hint">Proteinwert direkt eingeben</div>
+      </div>
+      <div class="extra-protein-display">
+        <div class="extra-protein-val zero" id="extra-val-display">0g</div>
+        <div class="extra-protein-label">Protein</div>
+      </div>
+    </div>
+    <div class="extra-input-row">
+      <input class="extra-input" type="number" id="extra-input" min="0" max="200" placeholder="z.B. 12" oninput="updateExtra()">
+      <span class="extra-unit">g Protein</span>
+    </div>
+  </div>
+
   <button class="reset-btn" onclick="resetAll()">↺ Alle Portionen zurücksetzen</button>
 
   <div class="dots">
@@ -389,7 +490,8 @@ const foods = [
   { name: "Lupinen",                         portion: "50g",                     ppP: 5  },
   { name: "Hummus",                          portion: "50g",                     ppP: 3  },
   { name: "Tofu",                            portion: "100g",                    ppP: 17 },
-  { name: "Tempeh",                          portion: "100g",                    ppP: 19 }
+  { name: "Tempeh",                          portion: "100g",                    ppP: 19 },
+  { name: "Ei",                             portion: "1 Ei",                    ppP: 7  }
 ];
 
 const GOAL = 80;
@@ -401,9 +503,19 @@ function portionLabel(v) {
 }
 
 function getTotal() {
-  return foods.reduce((sum, f, i) => {
+  const fromSliders = foods.reduce((sum, f, i) => {
     return sum + parseFloat(document.getElementById("sl-" + i).value) * f.ppP;
   }, 0);
+  const extra = parseFloat(document.getElementById("extra-input").value) || 0;
+  return fromSliders + extra;
+}
+
+function updateExtra() {
+  const val = parseFloat(document.getElementById("extra-input").value) || 0;
+  const display = document.getElementById("extra-val-display");
+  display.textContent = Math.round(val) + "g";
+  display.className = "extra-protein-val" + (val === 0 ? " zero" : "");
+  updateTotal();
 }
 
 function updateTotal() {
@@ -450,6 +562,8 @@ function resetAll() {
     document.getElementById("sl-" + i).value = 0;
     updateCard(i);
   });
+  document.getElementById("extra-input").value = "";
+  updateExtra();
 }
 
 const list = document.getElementById("food-list");
@@ -469,11 +583,38 @@ foods.forEach((f, i) => {
       </div>
     </div>
     <div class="slider-row">
-      <input type="range" id="sl-${i}" min="0" max="3" step="0.5" value="0" oninput="updateCard(${i})">
+      <input type="range" id="sl-${i}" min="0" max="3" step="0.5" value="0">
       <span class="portion-tag zero" id="ptag-${i}">0</span>
     </div>
   `;
   list.appendChild(card);
+
+  const slider = document.getElementById("sl-" + i);
+  let isDragging = false;
+
+  function startDrag(e) {
+    isDragging = true;
+    slider.classList.add("dragging");
+    e.stopPropagation();
+  }
+
+  function onDrag(e) {
+    if (!isDragging) return;
+    updateCard(i);
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    slider.classList.remove("dragging");
+    updateCard(i);
+  }
+
+  slider.addEventListener("mousedown", startDrag);
+  slider.addEventListener("touchstart", startDrag, { passive: true });
+  slider.addEventListener("input", onDrag);
+  document.addEventListener("mouseup", endDrag);
+  document.addEventListener("touchend", endDrag);
 });
 </script>
 </body>

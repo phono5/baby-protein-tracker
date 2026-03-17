@@ -701,6 +701,15 @@ function positionTooltip(wrap) {
 
 let openTip = null;
 
+function closeOpenTip() {
+  if (openTip) {
+    openTip.classList.remove("open");
+    openTip = null;
+  }
+}
+
+window.addEventListener("scroll", closeOpenTip, { passive: true });
+
 document.addEventListener("click", function(e) {
   const btn = e.target.closest(".info-btn");
   if (btn) {
@@ -720,8 +729,7 @@ document.addEventListener("click", function(e) {
     return;
   }
   if (openTip && !e.target.closest(".info-wrap")) {
-    openTip.classList.remove("open");
-    openTip = null;
+    closeOpenTip();
   }
 });
 </script>

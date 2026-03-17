@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Baby Protein Tracker</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F5DDD3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Protein Tracker">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -561,6 +567,72 @@ document.getElementById("ach-overlay").addEventListener("click", e => {
 // ── INIT ────────────────────────────────────────────────────────────────────
 if(state.pendingAnim) document.getElementById("notif-dot").style.display="block";
 initCloseDayBtn();
+
+// ── PWA: SERVICE WORKER ─────────────────────────────────────────────────────
+if("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(()=>{});
+}
+
+// ── PUSH NOTIFICATIONS ──────────────────────────────────────────────────────
+// VAPID public key – replace with your own from https://vapidkeys.com
+// For local browser notifications (no server), we use the Notification API directly
+async function requestNotificationPermission() {
+  if(!("Notification" in window)) return;
+  if(Notification.permission === "default") {
+    await Notification.requestPermission();
+  }
+}
+
+function sendLocalNotification(title, body) {
+  if(!("Notification" in window)) return;
+  if(Notification.permission !== "granted") return;
+  if(navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, {
+        body,
+        icon: "/icon-192.png",
+        badge: "/icon-192.png",
+        vibrate: [200, 100, 200],
+        tag: "bpt-streak",
+        renotify: true
+      });
+    });
+  } else {
+    new Notification(title, { body, icon: "/icon-192.png" });
+  }
+}
+
+// Ask for permission on first visit
+requestNotificationPermission();
+
+// Override closeDayManual to also send notification
+const _origCloseDay = closeDayManual;
+window.closeDayManual = function() {
+  const today = new Date().toDateString();
+  if(state.lastDate === today) return;
+  _origCloseDay();
+  const newStreak = state.streak;
+  const isReward = !!REWARDS[newStreak];
+  if(isReward) {
+    sendLocalNotification(
+      "🏆 Wochenziel Tag " + newStreak + " erreicht!",
+      REWARDS[newStreak].text
+    );
+    sendTelegramNotification(newStreak);
+  }
+};
+
+function sendTelegramNotification(streak) {
+  const token = "8756550436:AAEcFlCUzhL1UxkaufpsR7qY9F2TKKwQD7s";
+  const chatId = "55792927";
+  const reward = REWARDS[streak];
+  const msg = "🏆 Wochenziel Tag " + streak + " erreicht!\n\n" + (reward ? reward.text : "");
+  fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: "HTML" })
+  }).catch(() => {});
+}
 </script>
 </body>
 </html>
